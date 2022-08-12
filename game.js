@@ -18,6 +18,15 @@ $(document).keypress(function() {
   }
 });
 
+//Start button press detect
+$('#start-button').click(function() {
+  if (!started) {
+    $("#level-title").text("Level " + level);
+    nextSequence();
+    started = true;
+  }
+});
+
 //User clicks on a button, the function recognizes the array and put in a array to know the clicked sequence.
 $( ".btn").click(function(event) {
 
@@ -31,7 +40,9 @@ $( ".btn").click(function(event) {
 
 //checking the answer.
 function checkAnswer(currentLevel) {
-
+  console.log(currentLevel);
+console.log(gamePattern);
+console.log(userClickedPattern);
     // check the most recen user answer.
     if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
 
