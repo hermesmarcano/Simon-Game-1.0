@@ -7,7 +7,18 @@ var userClickedPattern = []; //User Clicked pattern
 
 var started = false;
 var level = 0;
-
+//Highscores initialization
+var storedHighscores = localStorage.getItem('highscores');
+var highscores = storedHighscores ? JSON.parse(storedHighscores) : [];
+localStorage.setItem('highscores', JSON.stringify(highscores));
+var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)highscores\s*=\s*([^;]*).*$)|^.*$/, "$1");
+if (cookieValue) {
+  highscores = JSON.parse(cookieValue);
+}
+console.log(highscores.length);
+console.log("started");
+if (highscores.length === 0) {highscores.push({ name: "Player1", score: 10 });}
+displayHighscores(highscores);
 
 //keyword detect
 $(document).keypress(function() {
@@ -72,7 +83,17 @@ console.log(userClickedPattern);
        }, 100);
 
       $('h1').text('Game Over, Press Any Key to Restart')
-
+      // Ask for player to input the name after updating the highscores array:
+      console.log("level:", level, " score: ", highscores[highscores.length - 1]);
+      if (level > highscores[highscores.length - 1].score) {
+      var playerName = prompt("Congratulations! Enter your name for the highscores:");
+      highscores.push({ name: playerName, score: level });
+      document.cookie = "highscores=" + JSON.stringify(highscores);
+      highscores.sort(function (a, b) {
+        return b.score - a.score;
+      });
+      }
+      displayHighscores();
     startOver();
 
 
@@ -116,9 +137,27 @@ function animatedPress(currentColour) {
        $('#'+currentColour).removeClass("pressed");
    }, 100);
 }
+
+function displayHighscores() {
+  var highscoresList = document.getElementById("highscores-list");
+  
+  // Clear previous entries
+  highscoresList.innerHTML = "";
+
+  // The highscores list - populate and limit to 10 items
+  for (var i = 0; i < highscores.length; i++) {
+    var entry = highscores[i];
+    var listItem = document.createElement("li");
+    listItem.textContent = entry.name + ": " + entry.score;
+    highscoresList.appendChild(listItem);
+  }
+  if (highscores.length > 10) {
+    highscores = highscores.slice(0, 10);
+  }
+}
+
 //reset the vaalues to start again.
 function startOver() {
-
 
   level = 0;
   gamePattern = [];
